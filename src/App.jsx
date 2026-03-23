@@ -1,4 +1,4 @@
-import Board from "./pages/Boards/_id"
+import Board from "~/pages/Boards/_id"
 // import useMediaQuery from '@mui/material/useMediaQuery'
 
 function App() {
