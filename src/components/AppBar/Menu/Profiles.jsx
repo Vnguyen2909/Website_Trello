@@ -39,6 +39,7 @@ function Profiles() {
         </IconButton>
       </Tooltip>
       <Menu
+        sx={{color: 'white'}}
         id="basic-menu"
         anchorEl={anchorEl}
         open={open}
