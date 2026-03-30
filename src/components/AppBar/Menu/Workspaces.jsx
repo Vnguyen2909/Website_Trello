@@ -27,8 +27,8 @@ function Workspace() {
     <Box>
       <Button
         sx={{color: 'white'}}
-        id="basic-button"
-        aria-controls={open ? 'basic-menu' : undefined}
+        id="basic-button-workspaces"
+        aria-controls={open ? 'basic-button-workspaces' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
@@ -43,7 +43,7 @@ function Workspace() {
         onClose={handleClose}
         slotProps={{
           list: {
-            'aria-labelledby': 'basic-button',
+            'aria-labelledby': 'basic-button-workspaces',
           },
         }}
       >
