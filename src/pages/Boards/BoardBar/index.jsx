@@ -35,7 +35,8 @@ function BoardBar() {
             gap: 2,
             overflow: 'auto',
             borderBottom: '1px solid #1752e9',
-            bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#30495e' : '#1976b2')
+            bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#30495e' : '#1976b2'),
+            '&::-webkit-scrollbar-track': {m: 2}
             }}>
 
             <Box sx={{display: 'flex', alignItems: 'center', gap: 2}}>
@@ -74,13 +75,16 @@ function BoardBar() {
                     Invite
                 </Button>
                 <AvatarGroup max={4}
-                    sx={{'& .MuiAvatar-root': {
-                        width: 34,
-                        height: 34,
-                        fontSize: 16,
-                        border: 'none'
+                    sx={{
+                        gap : '10px',
+                        '& .MuiAvatar-root': {
+                            width: 34,
+                            height: 34,
+                            fontSize: 16,
+                            border: 'none',
+                            cursor: 'pointer',
+                            '&:first-of-type': {bgcolor: '#a4b0be'}
                         },
-                        gap : '10px'
                     }}
                 >
                     <Tooltip title="2909nguyenv">
