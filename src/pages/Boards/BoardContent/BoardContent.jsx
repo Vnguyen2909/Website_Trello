@@ -167,20 +167,24 @@ function BoardContent({ board }) {
     //Kiem tra neu khong ton tai active hoac over
     if (!active || !over) return;
 
+    //Xu ly keo tha card
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) {
       console.log("Hanh dong keo tha card - tam thoi chua lam gi");
     }
 
-    if (active.id !== over.id) {
-      //Lay vi tri cu (tu thang active)
-      const oldIndex = orderedColumns.findIndex((c) => c._id === active.id);
-      //Lay vi tri thay doi (tu thang over)
-      const newIndex = orderedColumns.findIndex((c) => c._id === over.id);
-      //Thay doi bang arrayMove
-      const dndOrderedColumns = arrayMove(orderedColumns, oldIndex, newIndex);
-      //cloneDeepconst dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id);
+    //Xu ly keo tha column
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
+      if (active.id !== over.id) {
+        //Lay vi tri cu (tu thang active)
+        const oldIndex = orderedColumns.findIndex((c) => c._id === active.id);
+        //Lay vi tri thay doi (tu thang over)
+        const newIndex = orderedColumns.findIndex((c) => c._id === over.id);
+        //Thay doi bang arrayMove
+        const dndOrderedColumns = arrayMove(orderedColumns, oldIndex, newIndex);
+        //cloneDeepconst dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id);
 
-      setOrderedColumns(dndOrderedColumns);
+        setOrderedColumns(dndOrderedColumns);
+      }
     }
 
     setActiveDragItemId(null);
