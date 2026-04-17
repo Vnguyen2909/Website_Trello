@@ -11,9 +11,11 @@ import {
   DragOverlay,
   defaultDropAnimationSideEffects,
   closestCorners,
+  pointerWithin,
+  getFirstCollision,
 } from "@dnd-kit/core";
-import { useEffect, useState } from "react";
-import { arrayMove, defaultAnimateLayoutChanges } from "@dnd-kit/sortable";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { arrayMove } from "@dnd-kit/sortable";
 import { cloneDeep } from "lodash";
 import Column from "./ListColumns/Columns/Column";
 import Cards from "./ListColumns/Columns/ListCards/Card/Card";
@@ -32,6 +34,9 @@ function BoardContent({ board }) {
   const [activeDragItemData, setActiveDragItemData] = useState(null);
   const [oldColumnWhenDraggingCard, setOldColumnWhenDraggingCard] =
     useState(null);
+
+  //Diem va cham cuoi cung (xu ly thuat toan phat hien va cham)
+  const lastOverId = useRef(null);
 
   // const pointerSensor = useSensor(PointerSensor, {
   //   activationConstraint: { distance: 10 },
@@ -302,6 +307,56 @@ function BoardContent({ board }) {
     }),
   };
 
+  //args = arguments = cac doi so, tham so
+  const collisionDetectionStrategy = useCallback(
+    (args) => {
+      if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
+        return closestCorners({ ...args });
+      }
+
+      //Tim cac diem giao nhau, va cham - intersections voi con tro chuot
+      const pointerIntersections = pointerWithin(args);
+
+      //Fix truong hop keo card co image cover lon va keo len phia tren cung ra khoi khu vuc keo tha
+      if (!pointerIntersections?.length) return;
+
+      // //Thuat toan phat hien va cham se tra ve mot mang cac va cham
+      // const intersections =
+      //   pointerIntersections.length > 0
+      //     ? pointerIntersections
+      //     : rectIntersection(args);
+
+      //Tim overId dau tien trong intersections o tren
+      let overId = getFirstCollision(pointerIntersections, "id");
+
+      if (overId) {
+        const checkColumn = orderedColumns.find(
+          (column) => column._id === overId,
+        );
+
+        if (checkColumn) {
+          overId = closestCorners({
+            ...args,
+            droppableContainers: args.droppableContainers.filter(
+              (container) => {
+                return (
+                  container.id !== overId &&
+                  checkColumn?.cardOrderIds?.includes(container.id)
+                );
+              },
+            ),
+          })[0]?.id;
+        }
+        lastOverId.current = overId;
+        return [{ id: overId }];
+      }
+
+      //Neu overId la null thi tra ve mang rong
+      return lastOverId.current ? [{ id: lastOverId.current }] : [];
+    },
+    [activeDragItemType, orderedColumns],
+  );
+
   return (
     <DndContext
       onDragStart={handleDragStart}
@@ -309,7 +364,8 @@ function BoardContent({ board }) {
       onDragEnd={handleDragEnd}
       sensors={mySensors}
       //Thuat toan phat hien va cham su dung colsetsCorners(va cham goc)
-      collisionDetection={closestCorners}
+      // collisionDetection={closestCorners}
+      collisionDetection={collisionDetectionStrategy}
     >
       <Box
         sx={{
