@@ -16,7 +16,8 @@ import {
 } from "@dnd-kit/core";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
-import { cloneDeep } from "lodash";
+import { cloneDeep, isEmpty } from "lodash";
+import { generatePlaceholderCard } from "~/utils/formatters";
 import Column from "./ListColumns/Columns/Column";
 import Cards from "./ListColumns/Columns/ListCards/Card/Card";
 
@@ -112,6 +113,11 @@ function BoardContent({ board }) {
           (card) => card._id !== activeDraggingCardId,
         );
 
+        //Them Placeholder Card neu Column rong
+        if (isEmpty(nextActiveColumn.cards)) {
+          nextActiveColumn.cards = [generatePlaceholderCard(nextActiveColumn)];
+        }
+
         //Cap nhat lai mang CardOrderIds
         nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map(
           (card) => card._id,
@@ -137,11 +143,17 @@ function BoardContent({ board }) {
           rebuild_activeDraggingCardData,
         );
 
+        //Xoa placeholder card di neu no dang ton tai
+        nextOverColumn.cards = nextOverColumn.cards.filter(
+          (card) => !card.FE_PlaceholderCard,
+        );
+
         //Cap nhat lai mang CardOrderIds
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(
           (card) => card._id,
         );
       }
+      console.log("NextColumns:", nextColumns);
 
       return nextColumns;
     });
