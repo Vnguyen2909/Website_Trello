@@ -153,8 +153,6 @@ function BoardContent({ board }) {
           (card) => card._id,
         );
       }
-      console.log("NextColumns:", nextColumns);
-
       return nextColumns;
     });
   };
