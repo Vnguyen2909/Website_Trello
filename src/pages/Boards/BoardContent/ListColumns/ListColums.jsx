@@ -9,6 +9,7 @@ import {
 import { useState } from "react";
 import TextField from "@mui/material/TextField";
 import CloseIcon from "@mui/icons-material/Close";
+import { toast } from "react-toastify";
 
 function ListColumns({ columns }) {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false);
@@ -24,7 +25,18 @@ function ListColumns({ columns }) {
   };
 
   const addNewColumn = () => {
-    if (!newColumnTitle.trim()) return;
+    if (!newColumnTitle) {
+      toast.error("Please enter card title!", {
+        autoClose: 1200,
+        position: "top-right",
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return;
+    }
 
     // Goi API tao column moi tai day
 
