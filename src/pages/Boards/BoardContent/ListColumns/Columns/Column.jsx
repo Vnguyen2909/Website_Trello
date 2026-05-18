@@ -232,6 +232,7 @@ function Column({ column }) {
                 variant="outlined"
                 autoFocus
                 fullWidth
+                data-no-dnd="true"
                 onChange={(e) => setNewCardTitle(e.target.value)}
                 value={newCardTitle}
                 onKeyDown={(e) => {
@@ -267,6 +268,7 @@ function Column({ column }) {
                   variant="contained"
                   color="success"
                   size="small"
+                  data-no-dnd="true"
                   sx={{
                     boxShadow: "none",
                     border: "0.5px solid",
@@ -282,6 +284,7 @@ function Column({ column }) {
 
                 <CloseIcon
                   fontSize="small"
+                  data-no-dnd="true"
                   sx={{
                     color: (theme) => theme.palette.warning.light,
                     cursor: "pointer",
