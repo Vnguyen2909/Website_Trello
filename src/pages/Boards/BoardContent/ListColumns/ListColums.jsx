@@ -11,7 +11,7 @@ import TextField from "@mui/material/TextField";
 import CloseIcon from "@mui/icons-material/Close";
 import { toast } from "react-toastify";
 
-function ListColumns({ columns }) {
+function ListColumns({ columns, createNewColumn, createNewCard }) {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState("");
 
@@ -24,7 +24,7 @@ function ListColumns({ columns }) {
     setNewColumnTitle("");
   };
 
-  const addNewColumn = () => {
+  const addNewColumn = async () => {
     if (!newColumnTitle) {
       toast.error("Please enter card title!", {
         autoClose: 1200,
@@ -38,8 +38,12 @@ function ListColumns({ columns }) {
       return;
     }
 
-    // Goi API tao column moi tai day
+    //Tao du lieu Column de goi API
+    const newColumnData = {
+      title: newColumnTitle,
+    };
 
+    await createNewColumn(newColumnData);
     // Reset form
     closeNewColumnForm();
   };
@@ -62,7 +66,11 @@ function ListColumns({ columns }) {
       >
         {/* Render Columns */}
         {columns?.map((column) => (
-          <Column key={column._id} column={column} />
+          <Column
+            key={column._id}
+            column={column}
+            createNewCard={createNewCard}
+          />
         ))}
 
         {/* Add New Column */}
