@@ -25,7 +25,7 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: "ACTIVE_DRAGITEM_TYPE_CARD",
 };
 
-function BoardContent({ board }) {
+function BoardContent({ board, createNewColumn, createNewCard }) {
   const [orderedColumns, setOrderedColumns] = useState([]);
 
   //Cung 1 thoi diem chi co mot phan tu duoc keo (Column hoac Card)
@@ -385,7 +385,11 @@ function BoardContent({ board }) {
           p: "10px 0",
         }}
       >
-        <ListColumns columns={orderedColumns} />
+        <ListColumns
+          columns={orderedColumns}
+          createNewColumn={createNewColumn}
+          createNewCard={createNewCard}
+        />
         <DragOverlay dropAnimation={customDropAnimation}>
           {activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN &&
             activeDragItemData && <Column column={activeDragItemData} />}
