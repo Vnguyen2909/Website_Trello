@@ -25,7 +25,7 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: "ACTIVE_DRAGITEM_TYPE_CARD",
 };
 
-function BoardContent({ board, createNewColumn, createNewCard }) {
+function BoardContent({ board, createNewColumn, createNewCard, moveColumn }) {
   const [orderedColumns, setOrderedColumns] = useState([]);
 
   //Cung 1 thoi diem chi co mot phan tu duoc keo (Column hoac Card)
@@ -299,6 +299,10 @@ function BoardContent({ board, createNewColumn, createNewCard }) {
         );
         //cloneDeepconst dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id);
 
+        //
+        moveColumn(dndOrderedColumns);
+
+        //Cap nhat State
         setOrderedColumns(dndOrderedColumns);
       }
     }
