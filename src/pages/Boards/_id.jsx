@@ -7,6 +7,7 @@ import {
   fetchBoardDetailsAPI,
   createNewColumnAPI,
   createNewCardAPI,
+  updateBoardDetailsAPI,
 } from "~/apis";
 import { generatePlaceholderCard } from "~/utils/formatters";
 import { isEmpty } from "lodash";
@@ -35,8 +36,8 @@ function Board() {
     });
 
     //Khi tao mot Column thi no se chua co card, xu ly van de keo tha gan PlaceholderCard vao
-    column.cards = [generatePlaceholderCard(column)];
-    column.cardOrderIds = [generatePlaceholderCard(column)._id];
+    createColumn.cards = [generatePlaceholderCard(createColumn)];
+    createColumn.cardOrderIds = [generatePlaceholderCard(createColumn)._id];
 
     //Cap nhat State board
     const newBoard = { ...board };
@@ -55,13 +56,27 @@ function Board() {
     //Cap nhat State
     const newBoard = { ...board };
     const columnToUpdate = newBoard.columns.find(
-      (column) => column._id === createCard.column._id,
+      (column) => column._id === createCard.columnId,
     );
     if (columnToUpdate) {
       columnToUpdate.cards.push(createCard);
       columnToUpdate.cardOrderIds.push(createCard._id);
-      setBoard(columnToUpdate);
     }
+    setBoard(newBoard);
+  };
+
+  //Goi API khi keo tha Column xong
+  const moveColumn = async (dndOrderedColumns) => {
+    const dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id);
+    const newBoard = { ...board };
+    newBoard.columns = dndOrderedColumns;
+    newBoard.columnOrderIds = dndOrderedColumnsIds;
+    setBoard(newBoard);
+
+    //Goi API Update Board
+    await updateBoardDetailsAPI(newBoard._id, {
+      columnOrderIds: dndOrderedColumnsIds,
+    });
   };
 
   return (
@@ -72,6 +87,7 @@ function Board() {
         board={board}
         createNewColumn={createNewColumn}
         createNewCard={createNewCard}
+        moveColumn={moveColumn}
       />
     </Container>
   );
