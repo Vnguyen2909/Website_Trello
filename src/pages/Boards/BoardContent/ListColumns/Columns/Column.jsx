@@ -34,7 +34,7 @@ function Column({ column, createNewCard }) {
     setAnchorEl(null);
   };
 
-  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, "_id");
+  const orderedCards = column.cards;
 
   const {
     attributes,
