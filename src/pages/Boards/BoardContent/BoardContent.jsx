@@ -25,7 +25,14 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: "ACTIVE_DRAGITEM_TYPE_CARD",
 };
 
-function BoardContent({ board, createNewColumn, createNewCard, moveColumn }) {
+function BoardContent({
+  board,
+  createNewColumn,
+  createNewCard,
+  moveColumn,
+  moveCardInTheSameColumn,
+  moveCardToDifferentColumn,
+}) {
   const [orderedColumns, setOrderedColumns] = useState([]);
 
   //Cung 1 thoi diem chi co mot phan tu duoc keo (Column hoac Card)
@@ -55,7 +62,7 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn }) {
   const mySensors = useSensors(mouseSensor, touchSensor);
 
   useEffect(() => {
-    setOrderedColumns(mapOrder(board?.columns, board?.columnOrderIds, "_id"));
+    setOrderedColumns(board.columns);
   }, [board]);
 
   //Tim column theo cardId
@@ -65,7 +72,7 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn }) {
     );
   };
 
-  //Cap nhat lai State khi di chuyen card giua cac columns khac nhau
+  //Khoi tao Function chung Cap nhat lai State khi di chuyen card giua cac columns khac nhau
   const moveCardBetweenDifferentColumns = (
     overColumn,
     overCardId,
@@ -74,6 +81,7 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn }) {
     activeColumn,
     activeDraggingCardId,
     activeDragItemData,
+    triggerForm,
   ) => {
     setOrderedColumns((prevColumns) => {
       //Tim vi tri (index) overCard trong Column dich den (noi ma activeCard sap duoc tha)
@@ -152,6 +160,16 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn }) {
           (card) => card._id,
         );
       }
+
+      //Neu function nay duoc goi tu handleDragEnd nghia la da keo tha xong, luc nay moi xu ly API
+      if (triggerForm === "handleDragEnd") {
+        moveCardToDifferentColumn(
+          activeDraggingCardId,
+          oldColumnWhenDraggingCard._id,
+          nextOverColumn._id,
+          nextColumns,
+        );
+      }
       return nextColumns;
     });
   };
@@ -207,6 +225,7 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn }) {
         activeColumn,
         activeDraggingCardId,
         activeDragItemData,
+        "handleDragOver",
       );
     }
   };
@@ -234,7 +253,7 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn }) {
       if (!activeColumn || !overColumn) return;
 
       if (oldColumnWhenDraggingCard._id !== overColumn._id) {
-        //Hanh dong keo tha card voi 2 colum khac nhau
+        /**HANH DONG KEO THA CARD GIUA 2 COLUMN KHAC NHAU */
         moveCardBetweenDifferentColumns(
           overColumn,
           overCardId,
@@ -243,9 +262,10 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn }) {
           activeColumn,
           activeDraggingCardId,
           activeDragItemData,
+          "handleDragEnd",
         );
       } else {
-        //Hanh dong keo tha card trong cung mot column
+        /*HANH DONG KEO THA CARD CUNG 1 COLUMN*/
         //Lay vi tri cu (tu thang oldColumnWhenDraggingCard)
         const oldCardIndex = oldColumnWhenDraggingCard?.cards?.findIndex(
           (c) => c._id === activeDragItemId,
@@ -262,6 +282,8 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn }) {
           newCardIndex,
         );
 
+        const dndOrderedCardIds = dndOrderedCards.map((card) => card._id);
+
         setOrderedColumns((prevColumns) => {
           const nextColumns = cloneDeep(prevColumns);
 
@@ -277,6 +299,12 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn }) {
           //Tra ve vi tri state moi (chuan vi tri)
           return nextColumns;
         });
+
+        moveCardInTheSameColumn(
+          dndOrderedCards,
+          dndOrderedCardIds,
+          oldColumnWhenDraggingCard._id,
+        );
       }
     }
 
@@ -298,12 +326,10 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn }) {
           newColumnIndex,
         );
         //cloneDeepconst dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id);
-
-        //
-        moveColumn(dndOrderedColumns);
-
         //Cap nhat State
         setOrderedColumns(dndOrderedColumns);
+        //
+        moveColumn(dndOrderedColumns);
       }
     }
 
