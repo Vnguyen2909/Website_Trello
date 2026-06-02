@@ -30,9 +30,9 @@ function ListCards({ cards }) {
           "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "#bfc2cf" },
         }}
       >
-        {cards?.map((card) => (
-          <Cards key={card._id} card={card} />
-        ))}
+        {cards?.map((card) => {
+          return <Cards key={card._id} card={card} />;
+        })}
       </Box>
     </SortableContext>
   );

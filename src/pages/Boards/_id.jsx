@@ -13,9 +13,11 @@ import {
   updateBoardDetailsAPI,
   updateColumnDetailsAPI,
   moveCardDifferentColumnAPI,
+  deleteColumnDetailsAPI,
 } from "~/apis";
 import { generatePlaceholderCard } from "~/utils/formatters";
 import { isEmpty } from "lodash";
+import { toast } from "react-toastify";
 
 function Board() {
   const [board, setBoard] = useState(null);
@@ -24,6 +26,7 @@ function Board() {
     fetchBoardDetailsAPI(boardId).then((board) => {
       //Sap xep thu tu cac Column truoc khi dua du lieu xuong ben duoi cac component con
       board.columns = mapOrder(board?.columns, board?.columnOrderIds, "_id");
+
       //Can xu ly van de keo tha vao mot column rong
       board.columns.forEach((column) => {
         if (isEmpty(column.cards)) {
@@ -72,7 +75,7 @@ function Board() {
       //Neu column rong: ban chat la dang chua mot cai Placeholder card
       if (columnToUpdate.cards.some((card) => card.FE_PlaceholderCard)) {
         columnToUpdate.cards = [createCard];
-        columnToUpdate.cards = [createCard._id];
+        columnToUpdate.cardOrderIds = [createCard._id];
       } else {
         //Nguoc lai push vao cuoi mang
         columnToUpdate.cards.push(createCard);
@@ -152,6 +155,22 @@ function Board() {
     });
   };
 
+  //Xu ly xoa mot Column va Cards ben trong no
+  const deleteColumnDetails = (columnId) => {
+    console.log("🚀 ~ deleteColumnDetails ~ columnId:", columnId);
+    //Update chuan du lieu State Board
+    const newBoard = { ...board };
+    newBoard.columns = newBoard.columns.filter((c) => c._id !== columnId);
+    newBoard.columnOrderIds = newBoard.columnOrderIds.filter(
+      (_id) => _id !== columnId,
+    );
+    setBoard(newBoard);
+    //Goi API xu ly phia BE
+    deleteColumnDetailsAPI(columnId).then((res) => {
+      toast.success(res?.deleteResult);
+    });
+  };
+
   if (!board) {
     return (
       <Stack spacing={2} direction="row" sx={{ alignItems: "center" }}>
@@ -171,6 +190,7 @@ function Board() {
         moveColumn={moveColumn}
         moveCardInTheSameColumn={moveCardInTheSameColumn}
         moveCardToDifferentColumn={moveCardToDifferentColumn}
+        deleteColumnDetails={deleteColumnDetails}
       />
     </Container>
   );

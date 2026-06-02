@@ -32,6 +32,7 @@ function BoardContent({
   moveColumn,
   moveCardInTheSameColumn,
   moveCardToDifferentColumn,
+  deleteColumnDetails,
 }) {
   const [orderedColumns, setOrderedColumns] = useState([]);
 
@@ -101,7 +102,7 @@ function BoardContent({
       newCardIndex =
         overCardIndex >= 0
           ? overCardIndex + modifier
-          : overColumn?.cards?.lenght + 1;
+          : overColumn?.cards?.length + 1;
 
       //nextColumns: Column moi
       const nextColumns = cloneDeep(prevColumns);
@@ -419,6 +420,7 @@ function BoardContent({
           columns={orderedColumns}
           createNewColumn={createNewColumn}
           createNewCard={createNewCard}
+          deleteColumnDetails={deleteColumnDetails}
         />
         <DragOverlay dropAnimation={customDropAnimation}>
           {activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN &&
