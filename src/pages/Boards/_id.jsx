@@ -2,12 +2,10 @@ import Container from "@mui/material/Container";
 import AppBar from "~/components/AppBar/AppBar";
 import BoardBar from "~/pages/Boards/BoardBar/BoardBar";
 import BoardContent from "~/pages/Boards/BoardContent/BoardContent";
-import { useEffect, useState } from "react";
-import { mapOrder } from "~/utils/sorts";
+import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
 import {
-  fetchBoardDetailsAPI,
   createNewColumnAPI,
   createNewCardAPI,
   updateBoardDetailsAPI,
@@ -16,30 +14,24 @@ import {
   deleteColumnDetailsAPI,
 } from "~/apis";
 import { generatePlaceholderCard } from "~/utils/formatters";
-import { isEmpty } from "lodash";
+import { cloneDeep } from "lodash";
 import { toast } from "react-toastify";
+import {
+  fetchBoardDetailsAPI,
+  updateCurrentActiveBoard,
+  selectCurrentActiveBoard,
+} from "~/redux/activeBoard/activeBoardSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 function Board() {
-  const [board, setBoard] = useState(null);
+  const disPatch = useDispatch();
+  // const [board, setBoard] = useState(null);
+  const board = useSelector(selectCurrentActiveBoard);
   useEffect(() => {
     const boardId = "6a0b11eff0cc8bf25977772e";
-    fetchBoardDetailsAPI(boardId).then((board) => {
-      //Sap xep thu tu cac Column truoc khi dua du lieu xuong ben duoi cac component con
-      board.columns = mapOrder(board?.columns, board?.columnOrderIds, "_id");
-
-      //Can xu ly van de keo tha vao mot column rong
-      board.columns.forEach((column) => {
-        if (isEmpty(column.cards)) {
-          column.cards = [generatePlaceholderCard(column)];
-          column.cardOrderIds = [generatePlaceholderCard(column)._id];
-        } else {
-          //Sap xep thu tu cac Card truoc khi dua du lieu xuong ben duoi cac component con
-          column.cards = mapOrder(column.cards, column.cardOrderIds, "_id");
-        }
-      });
-      setBoard(board);
-    });
-  }, []);
+    //Call API
+    disPatch(fetchBoardDetailsAPI(boardId));
+  }, [disPatch]);
 
   //Goi API tao moi column va lam lai su lieu State Board
   const createNewColumn = async (newColumnData) => {
@@ -53,10 +45,11 @@ function Board() {
     createColumn.cardOrderIds = [generatePlaceholderCard(createColumn)._id];
 
     //Cap nhat State board
-    const newBoard = { ...board };
+    const newBoard = cloneDeep(board);
     newBoard.columns.push(createColumn);
     newBoard.columnOrderIds.push(createColumn._id);
-    setBoard(newBoard);
+
+    disPatch(updateCurrentActiveBoard(newBoard));
   };
 
   //Goi API tao moi card va lam lai su lieu State Board
@@ -67,7 +60,7 @@ function Board() {
     });
 
     //Cap nhat State
-    const newBoard = { ...board };
+    const newBoard = cloneDeep(board);
     const columnToUpdate = newBoard.columns.find(
       (column) => column._id === createCard.columnId,
     );
@@ -82,16 +75,18 @@ function Board() {
         columnToUpdate.cardOrderIds.push(createCard._id);
       }
     }
-    setBoard(newBoard);
+    disPatch(updateCurrentActiveBoard(newBoard));
   };
 
   //Goi API khi keo tha Column xong
   const moveColumn = (dndOrderedColumns) => {
     const dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id);
+
+    //Truong hop Spread Operator nay thi khong sao boi vi o day chung ta khong dung push de thay doi gia tri truc tiep
     const newBoard = { ...board };
     newBoard.columns = dndOrderedColumns;
     newBoard.columnOrderIds = dndOrderedColumnsIds;
-    setBoard(newBoard);
+    disPatch(updateCurrentActiveBoard(newBoard));
 
     //Goi API Update Board
     updateBoardDetailsAPI(newBoard._id, {
@@ -105,7 +100,7 @@ function Board() {
     dndOrderedCardIds,
     columnId,
   ) => {
-    const newBoard = { ...board };
+    const newBoard = cloneDeep(board);
     const columnToUpdate = newBoard.columns.find(
       (column) => column._id === columnId,
     );
@@ -113,7 +108,7 @@ function Board() {
       columnToUpdate.cards = dndOrderedCards;
       columnToUpdate.cardOrderIds = dndOrderedCardIds;
     }
-    setBoard(newBoard);
+    disPatch(updateCurrentActiveBoard(newBoard));
 
     //Goi API update Column
     updateColumnDetailsAPI(columnId, {
@@ -132,7 +127,7 @@ function Board() {
     const newBoard = { ...board };
     newBoard.columns = dndOrderedColumns;
     newBoard.columnOrderIds = dndOrderedColumnsIds;
-    setBoard(newBoard);
+    disPatch(updateCurrentActiveBoard(newBoard));
 
     //Goi API xu ly
     let prevCardOrderIds = dndOrderedColumns.find(
@@ -157,14 +152,13 @@ function Board() {
 
   //Xu ly xoa mot Column va Cards ben trong no
   const deleteColumnDetails = (columnId) => {
-    console.log("🚀 ~ deleteColumnDetails ~ columnId:", columnId);
     //Update chuan du lieu State Board
     const newBoard = { ...board };
     newBoard.columns = newBoard.columns.filter((c) => c._id !== columnId);
     newBoard.columnOrderIds = newBoard.columnOrderIds.filter(
       (_id) => _id !== columnId,
     );
-    setBoard(newBoard);
+    disPatch(updateCurrentActiveBoard(newBoard));
     //Goi API xu ly phia BE
     deleteColumnDetailsAPI(columnId).then((res) => {
       toast.success(res?.deleteResult);

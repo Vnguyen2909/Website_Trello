@@ -6,9 +6,11 @@ import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material/s
 import theme from "~/theme";
 import { ToastContainer } from "react-toastify";
 import { ConfirmProvider } from "material-ui-confirm";
+import { store } from "~/redux/store";
+import { Provider } from "react-redux";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+  <Provider store={store}>
     <CssVarsProvider theme={theme}>
       <ConfirmProvider
         defaultOptions={{
@@ -27,5 +29,5 @@ createRoot(document.getElementById("root")).render(
         <ToastContainer />
       </ConfirmProvider>
     </CssVarsProvider>
-  </StrictMode>,
+  </Provider>,
 );
