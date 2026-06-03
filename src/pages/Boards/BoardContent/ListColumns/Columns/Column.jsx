@@ -23,8 +23,18 @@ import TextField from "@mui/material/TextField";
 import CloseIcon from "@mui/icons-material/Close";
 import { toast } from "react-toastify";
 import { useConfirm } from "material-ui-confirm";
+import { createNewCardAPI, deleteColumnDetailsAPI } from "~/apis";
+import { cloneDeep } from "lodash";
+import {
+  updateCurrentActiveBoard,
+  selectCurrentActiveBoard,
+} from "~/redux/activeBoard/activeBoardSlice";
+import { useDispatch, useSelector } from "react-redux";
 
-function Column({ column, createNewCard, deleteColumnDetails }) {
+function Column({ column }) {
+  const disPatch = useDispatch();
+  const board = useSelector(selectCurrentActiveBoard);
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -85,8 +95,30 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
       columnId: column._id,
     };
 
-    await createNewCard(newCardData);
-    //Goi API
+    //Goi API tao moi card va lam lai su lieu State Board
+    const createCard = await createNewCardAPI({
+      ...newCardData,
+      boardId: board._id,
+    });
+
+    //Cap nhat State
+    const newBoard = cloneDeep(board);
+    const columnToUpdate = newBoard.columns.find(
+      (column) => column._id === createCard.columnId,
+    );
+    if (columnToUpdate) {
+      //Neu column rong: ban chat la dang chua mot cai Placeholder card
+      if (columnToUpdate.cards.some((card) => card.FE_PlaceholderCard)) {
+        columnToUpdate.cards = [createCard];
+        columnToUpdate.cardOrderIds = [createCard._id];
+      } else {
+        //Nguoc lai push vao cuoi mang
+        columnToUpdate.cards.push(createCard);
+        columnToUpdate.cardOrderIds.push(createCard._id);
+      }
+    }
+    disPatch(updateCurrentActiveBoard(newBoard));
+
     //Dong trang thai them Card moi va Clear Input
     closeNewCardForm();
   };
@@ -100,7 +132,18 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
         "This action will permanently delelte your Column and its Cards! Are you sure?",
     })
       .then(() => {
-        deleteColumnDetails(column._id);
+        //Xu ly xoa mot Column va Cards ben trong no
+        //Update chuan du lieu State Board
+        const newBoard = { ...board };
+        newBoard.columns = newBoard.columns.filter((c) => c._id !== column._id);
+        newBoard.columnOrderIds = newBoard.columnOrderIds.filter(
+          (_id) => _id !== column._id,
+        );
+        disPatch(updateCurrentActiveBoard(newBoard));
+        //Goi API xu ly phia BE
+        deleteColumnDetailsAPI(column._id).then((res) => {
+          toast.success(res?.deleteResult);
+        });
       })
       .catch(() => "");
   };
