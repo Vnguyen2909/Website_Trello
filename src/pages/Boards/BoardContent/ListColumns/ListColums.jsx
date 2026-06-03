@@ -10,13 +10,19 @@ import { useState } from "react";
 import TextField from "@mui/material/TextField";
 import CloseIcon from "@mui/icons-material/Close";
 import { toast } from "react-toastify";
+import { createNewColumnAPI } from "~/apis";
+import { generatePlaceholderCard } from "~/utils/formatters";
+import { cloneDeep } from "lodash";
+import {
+  updateCurrentActiveBoard,
+  selectCurrentActiveBoard,
+} from "~/redux/activeBoard/activeBoardSlice";
+import { useDispatch, useSelector } from "react-redux";
 
-function ListColumns({
-  columns,
-  createNewColumn,
-  createNewCard,
-  deleteColumnDetails,
-}) {
+function ListColumns({ columns }) {
+  const disPatch = useDispatch();
+  const board = useSelector(selectCurrentActiveBoard);
+
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState("");
 
@@ -48,7 +54,22 @@ function ListColumns({
       title: newColumnTitle,
     };
 
-    await createNewColumn(newColumnData);
+    //Goi API tao moi column va lam lai su lieu State Board
+    const createColumn = await createNewColumnAPI({
+      ...newColumnData,
+      boardId: board._id,
+    });
+
+    //Khi tao mot Column thi no se chua co card, xu ly van de keo tha gan PlaceholderCard vao
+    createColumn.cards = [generatePlaceholderCard(createColumn)];
+    createColumn.cardOrderIds = [generatePlaceholderCard(createColumn)._id];
+
+    //Cap nhat State board
+    const newBoard = cloneDeep(board);
+    newBoard.columns.push(createColumn);
+    newBoard.columnOrderIds.push(createColumn._id);
+
+    disPatch(updateCurrentActiveBoard(newBoard));
     // Reset form
     closeNewColumnForm();
   };
@@ -71,12 +92,7 @@ function ListColumns({
       >
         {/* Render Columns */}
         {columns?.map((column) => (
-          <Column
-            key={column._id}
-            column={column}
-            createNewCard={createNewCard}
-            deleteColumnDetails={deleteColumnDetails}
-          />
+          <Column key={column._id} column={column} />
         ))}
 
         {/* Add New Column */}

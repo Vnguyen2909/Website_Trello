@@ -1,6 +1,5 @@
 import Box from "@mui/material/Box";
 import ListColumns from "./ListColumns/ListColums";
-import { mapOrder } from "~/utils/sorts";
 import {
   DndContext,
   // PointerSensor,
@@ -27,12 +26,9 @@ const ACTIVE_DRAG_ITEM_TYPE = {
 
 function BoardContent({
   board,
-  createNewColumn,
-  createNewCard,
   moveColumn,
   moveCardInTheSameColumn,
   moveCardToDifferentColumn,
-  deleteColumnDetails,
 }) {
   const [orderedColumns, setOrderedColumns] = useState([]);
 
@@ -416,12 +412,7 @@ function BoardContent({
           p: "10px 0",
         }}
       >
-        <ListColumns
-          columns={orderedColumns}
-          createNewColumn={createNewColumn}
-          createNewCard={createNewCard}
-          deleteColumnDetails={deleteColumnDetails}
-        />
+        <ListColumns columns={orderedColumns} />
         <DragOverlay dropAnimation={customDropAnimation}>
           {activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN &&
             activeDragItemData && <Column column={activeDragItemData} />}
