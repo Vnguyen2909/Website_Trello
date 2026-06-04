@@ -367,6 +367,7 @@ function Column({ column }) {
                     },
                   }}
                   onClick={addNewCard}
+                  className="interceptor-loading"
                 >
                   Add
                 </Button>
