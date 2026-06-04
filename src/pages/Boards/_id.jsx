@@ -18,16 +18,19 @@ import {
   selectCurrentActiveBoard,
 } from "~/redux/activeBoard/activeBoardSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
 function Board() {
   const disPatch = useDispatch();
   // const [board, setBoard] = useState(null);
   const board = useSelector(selectCurrentActiveBoard);
+
+  const { boardId } = useParams();
+
   useEffect(() => {
-    const boardId = "6a0b11eff0cc8bf25977772e";
     //Call API
     disPatch(fetchBoardDetailsAPI(boardId));
-  }, [disPatch]);
+  }, [disPatch, boardId]);
 
   //Goi API khi keo tha Column xong
   const moveColumn = (dndOrderedColumns) => {
