@@ -3,8 +3,6 @@ import AppBar from "~/components/AppBar/AppBar";
 import BoardBar from "~/pages/Boards/BoardBar/BoardBar";
 import BoardContent from "~/pages/Boards/BoardContent/BoardContent";
 import { useEffect } from "react";
-import Stack from "@mui/material/Stack";
-import CircularProgress from "@mui/material/CircularProgress";
 import {
   updateBoardDetailsAPI,
   updateColumnDetailsAPI,
@@ -19,6 +17,7 @@ import {
 } from "~/redux/activeBoard/activeBoardSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import PageLoadingSpinner from "~/components/Loading/PageLoadingSpinner";
 
 function Board() {
   const disPatch = useDispatch();
@@ -105,11 +104,7 @@ function Board() {
   };
 
   if (!board) {
-    return (
-      <Stack spacing={2} direction="row" sx={{ alignItems: "center" }}>
-        <CircularProgress size="40px" aria-label="Loading…" />
-      </Stack>
-    );
+    return <PageLoadingSpinner caption="Loading Board..." />;
   }
 
   return (
