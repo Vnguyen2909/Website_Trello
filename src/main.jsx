@@ -1,4 +1,3 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "~/App.jsx";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -11,6 +10,10 @@ import { store } from "~/redux/store";
 import { Provider } from "react-redux";
 //Cau hinh react-router-dom voi BrowserRouter
 import { BrowserRouter } from "react-router-dom";
+//Cau hinh Redux-Persist
+import { PersistGate } from "redux-persist/integration/react";
+import { persistStore } from "redux-persist";
+const persistor = persistStore(store);
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter
@@ -21,24 +24,29 @@ createRoot(document.getElementById("root")).render(
     }}
   >
     <Provider store={store}>
-      <CssVarsProvider theme={theme}>
-        <ConfirmProvider
-          defaultOptions={{
-            allowClose: false,
-            dialogProps: {
-              disableRestoreFocus: true,
-              disableEnforceFocus: true,
-              keepMounted: true,
-            },
-            cancellationButtonProps: { color: "inherit" },
-            confirmationButtonProps: { color: "success", variant: "outlined" },
-          }}
-        >
-          <CssBaseline />
-          <App />
-          <ToastContainer />
-        </ConfirmProvider>
-      </CssVarsProvider>
+      <PersistGate persistor={persistor}>
+        <CssVarsProvider theme={theme}>
+          <ConfirmProvider
+            defaultOptions={{
+              allowClose: false,
+              dialogProps: {
+                disableRestoreFocus: true,
+                disableEnforceFocus: true,
+                keepMounted: true,
+              },
+              cancellationButtonProps: { color: "inherit" },
+              confirmationButtonProps: {
+                color: "success",
+                variant: "outlined",
+              },
+            }}
+          >
+            <CssBaseline />
+            <App />
+            <ToastContainer />
+          </ConfirmProvider>
+        </CssVarsProvider>
+      </PersistGate>
     </Provider>
   </BrowserRouter>,
 );
