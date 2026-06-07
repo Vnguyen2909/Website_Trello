@@ -1,5 +1,4 @@
 import React from "react";
-import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Avatar from "@mui/material/Avatar";
@@ -13,6 +12,8 @@ import Divider from "@mui/material/Divider";
 import { useSelector, useDispatch } from "react-redux";
 import { selectCurrentUser, logoutUserAPI } from "~/redux/user/userSlice";
 import { useConfirm } from "material-ui-confirm";
+import { Link } from "react-router-dom";
+import Box from "@mui/material/Box";
 
 function Profiles() {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -67,13 +68,20 @@ function Profiles() {
           },
         }}
       >
-        <MenuItem
-          sx={{
-            "&:hover": { color: "success.light" },
+        <Link
+          to="/settings/account"
+          style={{
+            color: "inherit",
           }}
         >
-          <Avatar sx={{ mr: 2 }} src={currentUser?.avatar} /> Profile
-        </MenuItem>
+          <MenuItem
+            sx={{
+              "&:hover": { color: "success.light" },
+            }}
+          >
+            <Avatar sx={{ mr: 2 }} src={currentUser?.avatar} /> Profile
+          </MenuItem>
+        </Link>
         <Divider />
         <MenuItem>
           <ListItemIcon>
