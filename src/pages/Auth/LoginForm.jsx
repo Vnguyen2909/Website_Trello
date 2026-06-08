@@ -45,7 +45,7 @@ function LoginForm() {
       })
       .then((res) => {
         //Kiem tra viec dang nhap khong co loi thi moi redirect ve route /
-        if (!res.error) navigate("/");
+        if (!res.error) navigate("/boards");
       });
   };
   return (

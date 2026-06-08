@@ -18,12 +18,7 @@ function App() {
   return (
     <Routes>
       {/**Redirect Route */}
-      <Route
-        path="/"
-        element={
-          <Navigate to="/boards/6a0b11eff0cc8bf25977772e" replace={true} />
-        }
-      />
+      <Route path="/" element={<Navigate to="/boards/" replace={true} />} />
       <Route element={<ProtectedRoute user={currentUser} />}>
         {/* React Router Dom / boards/  boards/{board_id} */}
         {/**Board Details */}
