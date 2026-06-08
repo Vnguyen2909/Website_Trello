@@ -8,6 +8,13 @@ export const updateBoardDetailsAPI = async (boardId, updateData) => {
     return response.data
 }
 
+//Create new Board
+export const createNewBoardAPI = async (data) => {
+    const response = await authorizeAxiosInstance.post(`${API_ROOT}/v1/boards`, data)
+    toast.success('Board created successfully!')
+    return response.data
+}
+
 //MoveCardDifferentColumn
 export const moveCardDifferentColumnAPI = async (updateData) => {
     const response = await authorizeAxiosInstance.put(`${API_ROOT}/v1/boards/supports/moving_cards`, updateData)

@@ -13,7 +13,6 @@ import Tooltip from "@mui/material/Tooltip";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddCardIcon from "@mui/icons-material/AddCard";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
-import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import Box from "@mui/material/Box";
 import ListCards from "./ListCards/ListCards";
@@ -23,13 +22,18 @@ import TextField from "@mui/material/TextField";
 import CloseIcon from "@mui/icons-material/Close";
 import { toast } from "react-toastify";
 import { useConfirm } from "material-ui-confirm";
-import { createNewCardAPI, deleteColumnDetailsAPI } from "~/apis";
+import {
+  createNewCardAPI,
+  deleteColumnDetailsAPI,
+  updateColumnDetailsAPI,
+} from "~/apis";
 import { cloneDeep } from "lodash";
 import {
   updateCurrentActiveBoard,
   selectCurrentActiveBoard,
 } from "~/redux/activeBoard/activeBoardSlice";
 import { useDispatch, useSelector } from "react-redux";
+import ToggleFocusInput from "~/components/Form/ToggleFocusInput";
 
 function Column({ column }) {
   const disPatch = useDispatch();
@@ -147,6 +151,17 @@ function Column({ column }) {
       })
       .catch(() => "");
   };
+  const onUpdateColumnTitle = (newTitle) => {
+    //Call API update Column va xu ly du lieu board
+    updateColumnDetailsAPI(column._id, { title: newTitle }).then(() => {
+      const newBoard = cloneDeep(board);
+      const columnToUpdate = newBoard.columns.find((c) => column._id === c._id);
+      if (columnToUpdate) {
+        columnToUpdate.title = newTitle;
+      }
+      disPatch(updateCurrentActiveBoard(newBoard));
+    });
+  };
 
   return (
     <div ref={setNodeRef} style={dndKitColumnStyles} {...attributes}>
@@ -173,16 +188,11 @@ function Column({ column }) {
             justifyContent: "space-between",
           }}
         >
-          <Typography
-            variant="h6"
-            sx={{
-              fontSize: "1rem",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-          >
-            {column?.title}
-          </Typography>
+          <ToggleFocusInput
+            value={column?.title}
+            onChangedValue={onUpdateColumnTitle}
+            data-no-dnd="true"
+          />
           <Box>
             <Tooltip title="More options">
               <KeyboardArrowDownIcon

@@ -15,6 +15,7 @@ import Button from "@mui/material/Button";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import { createNewBoardAPI } from "~/apis";
 
 import { styled } from "@mui/material/styles";
 const SidebarItem = styled(Box)(({ theme }) => ({
@@ -45,7 +46,7 @@ const BOARD_TYPES = {
  * component SidebarCreateBoardModal: tra ve mot cai SidebarItem hien thi o Board List
  * Modal: mot low-component
  */
-function SidebarCreateBoardModal() {
+function SidebarCreateBoardModal({ afterCreateNewBoard }) {
   const {
     control,
     register,
@@ -63,10 +64,12 @@ function SidebarCreateBoardModal() {
   };
 
   const submitCreateNewBoard = (data) => {
-    const { title, description, type } = data;
-    console.log("Board title: ", title);
-    console.log("Board description: ", description);
-    console.log("Board type: ", type);
+    createNewBoardAPI(data).then(() => {
+      //Buoc 1: Dong Modal
+      handleCloseModal();
+      //Buoc 2: Thong bao den component cha de xu ly
+      afterCreateNewBoard();
+    });
   };
 
   return (
