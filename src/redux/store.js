@@ -1,6 +1,7 @@
 //Redux: State management tool
 import { configureStore } from '@reduxjs/toolkit'
 import { activeBoardReducer } from '~/redux/activeBoard/activeBoardSlice'
+import { activeCardReducer } from './activeCard/activeCardSlice'
 import { userReducer } from './user/userSlice'
 
 /**Cau hinh Redux persist*/
@@ -26,7 +27,8 @@ const rootPersistConfig = {
 //Combine cac reducers
 const reducers = combineReducers({
   activeBoard: activeBoardReducer,
-    user: userReducer
+  user: userReducer,
+  activeCard: activeCardReducer
 })
 
 //Thuc hien persist Reducer
