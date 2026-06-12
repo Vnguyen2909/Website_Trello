@@ -5,12 +5,10 @@ import VpnLockIcon from "@mui/icons-material/VpnLock";
 import AddToDriveIcon from "@mui/icons-material/AddToDrive";
 import BoltIcon from "@mui/icons-material/Bolt";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import Avatar from "@mui/material/Avatar";
-import AvatarGroup from "@mui/material/AvatarGroup";
 import Tooltip from "@mui/material/Tooltip";
-import Button from "@mui/material/Button";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { formatcapitalizeFirstLetterter } from "~/utils/formatters";
+import BoardUserGroup from "./BoardUserGroup";
+import InviteBoardUser from "./InviteBoardUser";
 
 const Menu_Style = {
   color: "white",
@@ -81,47 +79,9 @@ function BoardBar({ board }) {
       </Box>
 
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <Button
-          variant="outlined"
-          startIcon={<PersonAddIcon />}
-          sx={{
-            color: "white",
-            borderColor: "white",
-            "&:hover": { borderColor: "white" },
-          }}
-        >
-          Invite
-        </Button>
-        <AvatarGroup
-          max={4}
-          sx={{
-            gap: "10px",
-            "& .MuiAvatar-root": {
-              width: 34,
-              height: 34,
-              fontSize: 16,
-              border: "none",
-              cursor: "pointer",
-              "&:first-of-type": { bgcolor: "#a4b0be" },
-            },
-          }}
-        >
-          <Tooltip title="2909nguyenv">
-            <Avatar alt="2909nguyenv" src="" />
-          </Tooltip>
-          <Tooltip title="2909nguyenv">
-            <Avatar alt="2909nguyenv" src="" />
-          </Tooltip>
-          <Tooltip title="2909nguyenv">
-            <Avatar alt="2909nguyenv" src="" />
-          </Tooltip>
-          <Tooltip title="2909nguyenv">
-            <Avatar alt="2909nguyenv" src="" />
-          </Tooltip>
-          <Tooltip title="2909nguyenv">
-            <Avatar alt="2909nguyenv" src="" />
-          </Tooltip>
-        </AvatarGroup>
+        {/**Xu ly moi user vao lam thanh vien cua Board */}
+        <InviteBoardUser boardId={board?._id} />
+        <BoardUserGroup boardUsers={board?.FE_AllUsers} />
       </Box>
     </Box>
   );

@@ -6,11 +6,18 @@ import CardMedia from "@mui/material/CardMedia";
 import GroupIcon from "@mui/icons-material/Group";
 import CommentIcon from "@mui/icons-material/Comment";
 import AttachmentIcon from "@mui/icons-material/Attachment";
-// import Typography from "@mui/material/Typography";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+import { useDispatch } from "react-redux";
+import {
+  updateCurrentActiveCard,
+  showModalActiveCard,
+} from "~/redux/activeCard/activeCardSlice";
+
 function Cards({ card }) {
+  const dispatch = useDispatch();
+
   const shouldShowCardAction = () => {
     return (
       !!card?.memberIds?.length ||
@@ -36,8 +43,16 @@ function Cards({ card }) {
     border: isDragging ? "1px solid #2ecc71" : undefined,
   };
 
+  const setActiveCard = () => {
+    //Cap nhat
+    dispatch(updateCurrentActiveCard(card));
+    //Hien modal
+    dispatch(showModalActiveCard());
+  };
+
   return (
     <Card
+      onClick={setActiveCard}
       ref={setNodeRef}
       style={dndKitCardStyles}
       {...attributes}

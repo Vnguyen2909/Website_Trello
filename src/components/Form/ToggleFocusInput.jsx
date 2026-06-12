@@ -19,9 +19,6 @@ function ToggleFocusInput({
       setInputValue(value);
       return;
     }
-
-    console.log("value: ", value);
-    console.log("inputValue: ", inputValue);
     //Khi gia tri thay doi => goi Func o Props cha
     onChangedValue(inputValue);
   };
@@ -69,7 +66,8 @@ function ToggleFocusInput({
         },
 
         "& .MuiOutlinedInput-input": {
-          px: "6px",
+          padding: "0 6px 0 6px",
+          height: "35px",
           overflow: "hidden",
           whiteSpace: "nowrap",
           textOverflow: "ellipsis",

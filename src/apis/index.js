@@ -15,6 +15,12 @@ export const createNewBoardAPI = async (data) => {
     return response.data
 }
 
+//Ferch Board API
+export const fetchBoardsAPI = async (searchPath) => {
+    const response = await authorizeAxiosInstance.get(`${API_ROOT}/v1/boards/${searchPath}`)
+    return response.data
+}
+
 //MoveCardDifferentColumn
 export const moveCardDifferentColumnAPI = async (updateData) => {
     const response = await authorizeAxiosInstance.put(`${API_ROOT}/v1/boards/supports/moving_cards`, updateData)
@@ -65,7 +71,15 @@ export const refreshTokenAPI = async () => {
     return response.data
 }
 
-export const fetchBoardsAPI = async (searchPath) => {
-    const response = await authorizeAxiosInstance.get(`${API_ROOT}/v1/boards/${searchPath}`)
+//Update Details API
+export const updateCardDetailsAPI = async (cardId, updateData) => {
+    const response = await authorizeAxiosInstance.put(`${API_ROOT}/v1/cards/${cardId}`, updateData)
+    return response.data
+}
+
+//Invite User to Board API
+export const inviteUserToBoardAPI = async (data) => {
+    const response = await authorizeAxiosInstance.post(`${API_ROOT}/v1/invitations/board`, data)
+    toast.success('User invited to board successfully!')
     return response.data
 }
