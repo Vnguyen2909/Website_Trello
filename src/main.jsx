@@ -21,15 +21,15 @@ import { injectStore } from "~/utils/authorizeAxios";
 injectStore(store);
 
 createRoot(document.getElementById("root")).render(
-  <BrowserRouter
-    basename="/"
-    future={{
-      v7_startTransition: true,
-      v7_relativeSplatPath: true,
-    }}
-  >
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
+  <Provider store={store}>
+    <PersistGate persistor={persistor}>
+      <BrowserRouter
+        basename="/"
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
         <CssVarsProvider theme={theme}>
           <ConfirmProvider
             defaultOptions={{
@@ -56,7 +56,7 @@ createRoot(document.getElementById("root")).render(
             <ToastContainer />
           </ConfirmProvider>
         </CssVarsProvider>
-      </PersistGate>
-    </Provider>
-  </BrowserRouter>,
+      </BrowserRouter>
+    </PersistGate>
+  </Provider>,
 );
