@@ -20,7 +20,6 @@ export const updateBoardInvitationsAPI = createAsyncThunk(
     'notifications/updateBoardInvitationsAPI',
     async ({ status, invitationId }) => {
         const response = await authorizeAxiosInstance.put(`${API_ROOT}/v1/invitations/board/${ invitationId }`, { status })
-         console.log("UPDATE RESPONSE:", response.data)
         return response.data
     }
 )

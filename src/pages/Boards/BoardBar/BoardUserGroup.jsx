@@ -60,7 +60,7 @@ function BoardUserGroup({ boardUsers = [], limit = 4 }) {
         </Tooltip>
       )}
 
-      {/* Khi click vao +number => open popover hien toan bo users*/}
+      {/* Khi click vao + number => open popover hien toan bo users*/}
       <Popover
         id={popoverId}
         open={isOpenPopover}
