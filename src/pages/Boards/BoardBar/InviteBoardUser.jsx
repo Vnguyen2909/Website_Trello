@@ -14,6 +14,7 @@ import {
 } from "~/utils/validators";
 import FieldErrorAlert from "~/components/Form/FieldErrorAlert";
 import { inviteUserToBoardAPI } from "~/apis";
+import { socketIoInstance } from "~/socketClient";
 
 function InviteBoardUser({ boardId }) {
   /**
@@ -37,12 +38,13 @@ function InviteBoardUser({ boardId }) {
   const submitInviteUserToBoard = (data) => {
     const { inviteeEmail } = data;
     //Call API
-    inviteUserToBoardAPI({ inviteeEmail, boardId }).then(() => {
+    inviteUserToBoardAPI({ inviteeEmail, boardId }).then((invitation) => {
       //Clear the Input su dung react-hook-form bang setValue
       setValue("inviteeEmail", null);
       setAnchorPopoverElement(null);
 
       //Moi 1 nguoi dung vao Board xong thi cung gui/emit su kien socket len server(tinh nang real-time)
+      socketIoInstance.emit("FE_USER_INVITED_TO_BOARD", invitation);
     });
   };
 
