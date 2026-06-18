@@ -26,8 +26,8 @@ function BoardUserGroup({ boardUsers = [], limit = 4 }) {
             <Tooltip title={user?.displayName} key={index}>
               <Avatar
                 sx={{ width: 34, height: 34, cursor: "pointer" }}
-                alt={user?.avatar}
-                src=""
+                alt=""
+                src={user.avatar}
               />
             </Tooltip>
           );
@@ -77,15 +77,17 @@ function BoardUserGroup({ boardUsers = [], limit = 4 }) {
             gap: 1,
           }}
         >
-          {boardUsers.map((user, index) => (
-            <Tooltip title={user?.displayName} key={index}>
-              <Avatar
-                sx={{ width: 34, height: 34, cursor: "pointer" }}
-                alt={user?.avatar}
-                src=""
-              />
-            </Tooltip>
-          ))}
+          {boardUsers.map((user, index) => {
+            return (
+              <Tooltip title={user?.displayName} key={index}>
+                <Avatar
+                  sx={{ width: 34, height: 34, cursor: "pointer" }}
+                  alt=""
+                  src={user.avatar}
+                />
+              </Tooltip>
+            );
+          })}
         </Box>
       </Popover>
     </Box>
