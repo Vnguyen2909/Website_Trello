@@ -6,8 +6,11 @@ import Popover from "@mui/material/Popover";
 import AddIcon from "@mui/icons-material/Add";
 import Badge from "@mui/material/Badge";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { useSelector } from "react-redux";
+import { selectCurrentActiveBoard } from "~/redux/activeBoard/activeBoardSlice";
+import { CARD_MEMBER_ACTIONS } from "~/utils/constants";
 
-function CardUserGroup({ cardMemberIds = [] }) {
+function CardUserGroup({ cardMemberIds = [], onUpdateCardMembers }) {
   /**
    * Popover (an hoac hien toan bo users trong 1 cai popup)
    * https://mui.com/material-ui/react-popover/
@@ -20,14 +23,32 @@ function CardUserGroup({ cardMemberIds = [] }) {
     else setAnchorPopoverElement(null);
   };
 
+  //Lay thong tin nhung thanh vien cua Board thong qua FE_AllUsers
+  const board = useSelector(selectCurrentActiveBoard);
+  //Thanh vien trong Card la tap con cua thanh vien trong Board
+  const FE_CardMembers = board.FE_AllUsers?.filter((user) =>
+    cardMemberIds.includes(user._id),
+  );
+
+  //Se co 2 Action REMOVE VA ADD
+  const handleUpdateCardMembers = (user) => {
+    const incomingMemberInfo = {
+      userId: user._id,
+      action: cardMemberIds.includes(user._id)
+        ? CARD_MEMBER_ACTIONS.REMOVE
+        : CARD_MEMBER_ACTIONS.ADD,
+    };
+    onUpdateCardMembers(incomingMemberInfo);
+  };
+
   return (
     <Box sx={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
-      {[...Array(8)].map((_, index) => (
+      {FE_CardMembers.map((user, index) => (
         <Tooltip title="" key={index}>
           <Avatar
             sx={{ width: 34, height: 34, cursor: "pointer" }}
             alt=""
-            src=""
+            src={user.avatar}
           />
         </Tooltip>
       ))}
@@ -82,21 +103,33 @@ function CardUserGroup({ cardMemberIds = [] }) {
             gap: 1.5,
           }}
         >
-          {[...Array(16)].map((_, index) => (
-            <Tooltip title="" key={index}>
-              {/*Avatar kem badge icon: https://mui.com/material-ui/react-avatar/#with-badge */}
-              <Badge
-                sx={{ cursor: "pointer" }}
-                overlap="rectangular"
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                badgeContent={
-                  <CheckCircleIcon fontSize="small" sx={{ color: "#27ae60" }} />
-                }
-              >
-                <Avatar sx={{ width: 34, height: 34 }} alt="" src="" />
-              </Badge>
-            </Tooltip>
-          ))}
+          {board.FE_AllUsers.map((user, index) => {
+            return (
+              <Tooltip title="" key={index}>
+                {/*Avatar kem badge icon: https://mui.com/material-ui/react-avatar/#with-badge */}
+                <Badge
+                  sx={{ cursor: "pointer" }}
+                  overlap="rectangular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  badgeContent={
+                    cardMemberIds.includes(user._id) ? (
+                      <CheckCircleIcon
+                        fontSize="small"
+                        sx={{ color: "#27ae60" }}
+                      />
+                    ) : null
+                  }
+                  onClick={() => handleUpdateCardMembers(user)}
+                >
+                  <Avatar
+                    sx={{ width: 34, height: 34 }}
+                    alt=""
+                    src={user.avatar}
+                  />
+                </Badge>
+              </Tooltip>
+            );
+          })}
         </Box>
       </Popover>
     </Box>

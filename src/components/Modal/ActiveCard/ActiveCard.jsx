@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
@@ -43,6 +42,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { updateCardDetailsAPI } from "~/apis";
 import { updateCardInBoard } from "~/redux/activeBoard/activeBoardSlice";
+import { selectCurrentUser } from "~/redux/user/userSlice";
+import { CARD_MEMBER_ACTIONS } from "~/utils/constants";
 
 import { styled } from "@mui/material/styles";
 const SidebarItem = styled(Box)(({ theme }) => ({
@@ -72,6 +73,7 @@ function ActiveCard() {
   const dispatch = useDispatch();
   const activeCard = useSelector(selectCurrentActiveCard);
   const iShowactiveCard = useSelector(selectIshowModalActiveCard);
+  const currentUser = useSelector(selectCurrentUser);
 
   const handleCloseModal = () => {
     dispatch(clearAndHideCurrentActiveCard());
@@ -117,6 +119,11 @@ function ActiveCard() {
   const onAddCardComments = async (commentToAdd) => {
     //Call API updateCard
     await callApiUpdateCard({ commentToAdd });
+  };
+
+  const onUpdateCardMembers = (incomingMemberInfo) => {
+    //Call API updateCard
+    callApiUpdateCard({ incomingMemberInfo });
   };
 
   return (
@@ -219,7 +226,10 @@ function ActiveCard() {
               </Typography>
 
               {/*Xu ly cac members cua Card */}
-              <CardUserGroup />
+              <CardUserGroup
+                cardMemberIds={activeCard?.memberIds}
+                onUpdateCardMembers={onUpdateCardMembers}
+              />
             </Box>
 
             <Box sx={{ mb: 3 }}>
@@ -268,10 +278,23 @@ function ActiveCard() {
             </Typography>
             <Stack direction="column" spacing={1}>
               {/*Xu ly hanh dong: user tu join vao card */}
-              <SidebarItem className="active">
-                <PersonOutlineOutlinedIcon fontSize="small" />
-                Join
-              </SidebarItem>
+              {/*Neu user hien tai dang dang nhap chua thuoc mang memberIds cua card thi moi cho hien Join */}
+              {/*Khi click vao Join thuc hien luon hanh dong ADD */}
+              {!activeCard?.memberIds?.includes(currentUser._id) && (
+                <SidebarItem
+                  className="active"
+                  onClick={() =>
+                    onAddCardComments({
+                      userId: currentUser._id,
+                      action: CARD_MEMBER_ACTIONS.ADD,
+                    })
+                  }
+                >
+                  <PersonOutlineOutlinedIcon fontSize="small" />
+                  Join
+                </SidebarItem>
+              )}
+
               {/*Xu ly cap nhat anh Cover cua Card */}
               <SidebarItem className="active" component="label">
                 <ImageOutlinedIcon fontSize="small" />
